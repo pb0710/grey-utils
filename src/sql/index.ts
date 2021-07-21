@@ -5,26 +5,19 @@ function escape(str: any): string {
 /**
  * 简单封装一层 SQL 语句。支持链式调用。
  */
-type QueryFunc = (sql: string) => Promise<any>
 export default class SQL {
-	private queryFunc?: QueryFunc
 	private sql: string
-	constructor(query?: QueryFunc) {
-		this.queryFunc = query
+	constructor() {
 		this.sql = ''
-	}
-
-	public reset(): this {
-		this.sql = ''
-		return this
 	}
 
 	/**
 	 * 调用此方法表示 SQL 语句拼接结束，随即进行 query 操作。
 	 */
-	public end<R>(): Promise<R> | string {
+	public end(): string {
 		const result = `${this.sql.trim()};`
-		return this.queryFunc?.(result) ?? result
+		this.sql = ''
+		return result
 	}
 
 	/**
