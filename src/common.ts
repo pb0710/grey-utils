@@ -47,3 +47,15 @@ export function throttle<F extends (...args: Arg<F>[]) => void>(
 		}
 	}
 }
+
+export function delay(duration = 0): Promise<void> {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve()
+		}, duration)
+	})
+}
+
+export function isNodeJSEnv(): boolean {
+	return typeof process !== 'undefined' && process?.versions != null && process?.versions.node != null
+}

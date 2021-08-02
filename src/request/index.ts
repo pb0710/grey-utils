@@ -1,18 +1,19 @@
+import { isNodeJSEnv } from '../common'
 import compose from '../compose'
 import omit from '../omit'
 
-export type Func = (...s: any[]) => any
+export type Fn = (...s: any[]) => any
 class Interceptor {
-	private fulfillFns: Func[]
-	private failFns: Func[]
-	public fulfill?: Func
-	public fail?: Func
+	private fulfillFns: Fn[]
+	private failFns: Fn[]
+	public fulfill?: Fn
+	public fail?: Fn
 	constructor() {
 		this.fulfillFns = []
 		this.failFns = []
 	}
 
-	public use<T extends Func, S extends Func>(fulfill: T, fail: S): this {
+	public use<T extends Fn, S extends Fn>(fulfill: T, fail: S): this {
 		this.fulfillFns.push(fulfill)
 		this.failFns.push(fail)
 		this.fulfill = compose(...this.fulfillFns)
@@ -34,11 +35,12 @@ class CancelToken {
 	}
 }
 
+type FetchFn = (input: RequestInfo, init?: RequestInit) => Promise<Response>
 interface Config extends Omit<RequestInit, 'body'> {
-	parse?: 'json' | 'blob' | 'formData' | 'arrayBuffer' | 'text'
+	parse?: 'json' | 'blob' | 'arrayBuffer' | 'text'
 	url?: string
-	params?: { [key: string]: any }
-	data?: { [key: string]: any }
+	params?: Record<string, any>
+	data?: Record<string, any>
 }
 interface BaseConfig extends Omit<Config, 'url'> {
 	baseURL?: string
@@ -51,7 +53,7 @@ export default class Async {
 	}
 	public CancelToken: typeof CancelToken
 	constructor(baseConf: BaseConfig = {}) {
-		this.baseConf = baseConf
+		this.baseConf = { mode: 'cors', ...baseConf }
 		this.interceptors = {
 			request: new Interceptor(),
 			response: new Interceptor()
@@ -59,25 +61,22 @@ export default class Async {
 		this.CancelToken = CancelToken
 	}
 
-	public fetch<R>(conf: Config): Promise<R> {
+	public async fetch<R>(conf: Config): Promise<R> {
 		const { parse = 'json' } = conf
 
-		const info = this.getInfo(conf)
+		const integratedConf: Config & BaseConfig = { ...this.baseConf, ...conf }
+		const info = this.getInfo(integratedConf)
 		let init: RequestInit
 		try {
-			init = this.getInit(conf)
+			init = this.getInit(integratedConf)
 		} catch (error) {
 			return Promise.reject(error)
 		}
 
-		return fetch(info, init)
+		const _fetch: FetchFn = isNodeJSEnv() ? ((await import('node-fetch')) as unknown as FetchFn) : fetch
+		return await _fetch(info, init)
 			.then(
-				response => {
-					if (!response.ok) {
-						return Promise.reject(response)
-					}
-					return response[parse]()
-				},
+				response => (response.ok ? response[parse]() : Promise.reject(response)),
 				error => {
 					if (error.name === 'AbortError') {
 						// We know it's been canceled!
@@ -89,39 +88,42 @@ export default class Async {
 			.then(this.interceptors.response.fulfill)
 	}
 
-	private getInfo(conf: Config): string {
-		const { baseURL, url, params = {} } = { ...this.baseConf, ...conf }
-		const realUrl = `${baseURL}${url}`
-		const qs = Object.keys(params).reduce((pre, cur) => pre + `&${cur}=${params[cur]}`, '')
-		const prefix = qs && !realUrl.includes('?') ? '?' : ''
-		return realUrl + prefix + qs
+	private getInfo(conf: Config & BaseConfig): string {
+		const { baseURL = '', url = '', params = {} } = conf
+		const integratedUrl = `${baseURL}${url}`
+		const qs = Object.keys(params).reduce(
+			(pre, cur, i) => `${pre}${i === 0 ? '' : '&'}${cur}=${params[cur]}`,
+			''
+		)
+		const prefix = qs && !integratedUrl.includes('?') ? '?' : ''
+		return integratedUrl + prefix + qs
 	}
 
-	private getInit(conf: Config): RequestInit {
-		const { data = {} } = conf
-		let realConf: Config & BaseConfig = { ...this.baseConf, ...conf }
+	private getInit(conf: Config & BaseConfig): RequestInit {
+		const { data } = conf
+		let confClone = { ...conf }
 		try {
-			realConf = this.interceptors.request.fulfill?.(realConf) ?? realConf
-			realConf = omit(realConf, 'baseURL', 'url', 'data')
-			return { ...realConf, body: JSON.stringify(data) }
+			confClone = this.interceptors.request.fulfill?.(confClone) ?? confClone
+			confClone = omit(confClone, 'baseURL', 'url', 'data')
+			return data ? { ...confClone, body: JSON.stringify(data) } : confClone
 		} catch (error) {
 			throw this.interceptors.request.fail?.(error) ?? error
 		}
 	}
 
-	public get<R>(url: string, conf: Omit<Config, 'url'>): Promise<R> {
-		return this.fetch<R>({ ...conf, url, method: 'GET' })
+	public get<R>(url: string, conf?: Config): Promise<R> {
+		return this.fetch({ ...conf, url, method: 'GET' })
 	}
 
-	public post<R>(url: string, conf: Omit<Config, 'url'>): Promise<R> {
-		return this.fetch<R>({ ...conf, url, method: 'POST' })
+	public post<R>(url: string, data: Record<string, any>, conf?: Config): Promise<R> {
+		return this.fetch({ ...conf, url, data, method: 'POST' })
 	}
 
-	public put<R>(url: string, conf: Omit<Config, 'url'>): Promise<R> {
-		return this.fetch<R>({ ...conf, url, method: 'PUT' })
+	public put<R>(url: string, data: Record<string, any>, conf?: Config): Promise<R> {
+		return this.fetch({ ...conf, url, data, method: 'PUT' })
 	}
 
-	public delete<R>(url: string, conf: Omit<Config, 'url'>): Promise<R> {
-		return this.fetch<R>({ ...conf, url, method: 'DELETE' })
+	public delete<R>(url: string, conf?: Config): Promise<R> {
+		return this.fetch({ ...conf, url, method: 'DELETE' })
 	}
 }

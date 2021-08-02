@@ -21,7 +21,7 @@ export default class SQL {
 	}
 
 	/**
-	 * 由于封装的 mysql 方法覆盖不到所有 SQL 语句，所以此 API 允许拼接自定义语句到当前 SQL 后边，方便使用。
+	 * 由于封装的 mysql 方法覆盖不到所有 SQL 语句，所以此 API 允许直接拼接 SQL 语句。
 	 * @param sql 自定义的 SQL 语句
 	 */
 	public native(sql: string): this {
