@@ -1,4 +1,3 @@
-import { isNodeJSEnv } from '../common'
 import compose from '../compose'
 import omit from '../omit'
 
@@ -73,7 +72,7 @@ export default class Async {
 			return Promise.reject(error)
 		}
 
-		const _fetch: FetchFn = isNodeJSEnv() ? ((await import('node-fetch')) as unknown as FetchFn) : fetch
+		const _fetch: FetchFn = fetch
 		return await _fetch(info, init)
 			.then(
 				response => (response.ok ? response[parse]() : Promise.reject(response)),
@@ -91,10 +90,7 @@ export default class Async {
 	private getInfo(conf: Config & BaseConfig): string {
 		const { baseURL = '', url = '', params = {} } = conf
 		const integratedUrl = `${baseURL}${url}`
-		const qs = Object.keys(params).reduce(
-			(pre, cur, i) => `${pre}${i === 0 ? '' : '&'}${cur}=${params[cur]}`,
-			''
-		)
+		const qs = Object.keys(params).reduce((pre, cur, i) => `${pre}${i === 0 ? '' : '&'}${cur}=${params[cur]}`, '')
 		const prefix = qs && !integratedUrl.includes('?') ? '?' : ''
 		return integratedUrl + prefix + qs
 	}

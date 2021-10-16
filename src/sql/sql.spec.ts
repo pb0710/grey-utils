@@ -1,6 +1,12 @@
-import SQL from '.'
+import { SQL, createSQL } from '.'
 
 describe('CRUD', () => {
+	it('can get instance', () => {
+		const sql = new SQL()
+		expect(sql).toEqual({ sql: '' })
+		expect(createSQL()).toEqual({ sql: '' })
+	})
+
 	it('can create', () => {
 		const sql = new SQL()
 		expect(

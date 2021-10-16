@@ -1,18 +1,18 @@
 // TODO:
-function escape(str: any): string {
+function escape<T>(str: T): string {
 	return String(str)
 }
 /**
  * 简单封装一层 SQL 语句。支持链式调用。
  */
-export default class SQL {
+export class SQL {
 	private sql: string
 	constructor() {
 		this.sql = ''
 	}
 
 	/**
-	 * 调用此方法表示 SQL 语句拼接结束，随即进行 query 操作。
+	 * 调用此方法表示 SQL 语句拼接结束，返回完整的 query 字符串。
 	 */
 	public end(): string {
 		const result = `${this.sql.trim()};`
@@ -173,4 +173,8 @@ export default class SQL {
 		this.sql += ` CREATE TABLE ${tableName}${columnStr}`
 		return this
 	}
+}
+
+export function createSQL(): SQL {
+	return new SQL()
 }

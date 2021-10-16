@@ -14,5 +14,6 @@
 		"noImplicitReturns": true,
 		"noImplicitAny": true
 	},
-	"include": ["./src", "./_example"]
+	"include": ["./src", "./example"],
+	"exclude": ["**/__*__/*"]
 }

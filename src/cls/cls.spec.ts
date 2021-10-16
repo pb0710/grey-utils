@@ -29,9 +29,7 @@ describe('use cls to get classes', () => {
 	})
 
 	it('receive arrays (variadic)', () => {
-		expect(cls(['foo'], ['', 0, false, 'bar'], [['baz', [['hello'], 'there']]])).toBe(
-			'foo bar baz hello there'
-		)
+		expect(cls(['foo'], ['', 0, false, 'bar'], [['baz', [['hello'], 'there']]])).toBe('foo bar baz hello there')
 	})
 
 	it('receive kitchen sink (with nesting)', () => {

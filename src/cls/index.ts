@@ -15,4 +15,3 @@ export default function cls(...args: any[]): string {
 		.filter(Boolean)
 		.join(' ')
 }
-
