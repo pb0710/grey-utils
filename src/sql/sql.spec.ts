@@ -3,8 +3,10 @@ import { SQL, createSQL } from '.'
 describe('CRUD', () => {
 	it('can get instance', () => {
 		const sql = new SQL()
-		expect(sql).toEqual({ sql: '' })
-		expect(createSQL()).toEqual({ sql: '' })
+		const sqlInstance = { sql: '' }
+		expect(sql).toEqual(sqlInstance)
+		expect(createSQL()).toEqual(sqlInstance)
+		expect(SQL.create()).toEqual(sqlInstance)
 	})
 
 	it('can create', () => {

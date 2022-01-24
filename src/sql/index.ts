@@ -11,6 +11,10 @@ export class SQL {
 		this.sql = ''
 	}
 
+	static create(): SQL {
+		return new SQL()
+	}
+
 	/**
 	 * 调用此方法表示 SQL 语句拼接结束，返回完整的 query 字符串。
 	 */
