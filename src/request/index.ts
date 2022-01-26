@@ -1,5 +1,6 @@
 import compose from '../compose'
 import omit from '../omit'
+import { join } from '../path'
 
 export type Fn = (...s: any[]) => any
 class Interceptor {
@@ -89,7 +90,7 @@ export default class Async {
 
 	private getInfo(conf: Config & BaseConfig): string {
 		const { baseURL = '', url = '', params = {} } = conf
-		const integratedUrl = `${baseURL}${url}`
+		const integratedUrl = join(baseURL, url)
 		const qs = Object.keys(params).reduce((pre, cur, i) => `${pre}${i === 0 ? '' : '&'}${cur}=${params[cur]}`, '')
 		const prefix = qs && !integratedUrl.includes('?') ? '?' : ''
 		return integratedUrl + prefix + qs

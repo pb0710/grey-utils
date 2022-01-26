@@ -9,7 +9,7 @@ export function isPlainObject(obj: unknown): boolean {
 	return Object.getPrototypeOf(obj) === proto
 }
 
-export function isValueEqual(a: unknown, b: unknown): boolean {
+export function isDeepEqual(a: unknown, b: unknown): boolean {
 	if (typeof a === 'number' && isNaN(a) && typeof b === 'number' && isNaN(b)) {
 		return true
 	}
@@ -24,7 +24,7 @@ export function isValueEqual(a: unknown, b: unknown): boolean {
 			return false
 		}
 		for (let i = 0; i < a.length; i++) {
-			if (!isValueEqual(a[i], b[i])) {
+			if (!isDeepEqual(a[i], b[i])) {
 				return false
 			}
 		}
@@ -38,7 +38,7 @@ export function isValueEqual(a: unknown, b: unknown): boolean {
 	const _a: Record<string, any> = a
 	const _b: Record<string, any> = b
 	for (const key of aKeys) {
-		if (!b.hasOwnProperty(key) || !isValueEqual(_a[key], _b[key])) {
+		if (!b.hasOwnProperty(key) || !isDeepEqual(_a[key], _b[key])) {
 			return false
 		}
 	}
