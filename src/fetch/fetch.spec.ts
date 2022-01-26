@@ -10,7 +10,7 @@ describe('interceptors', () => {
 			.use(
 				res => {
 					expect(res).toMatchObject({
-						url: 'v1/xyz',
+						url: '/v1/xyz',
 						baseUrl: 'v1',
 						method: 'post',
 						headers: {}
@@ -24,7 +24,7 @@ describe('interceptors', () => {
 			.use(
 				res => {
 					expect(res).toMatchObject({
-						url: 'v1/xyz',
+						url: '/v1/xyz',
 						baseUrl: 'v1',
 						method: 'post',
 						headers: {}

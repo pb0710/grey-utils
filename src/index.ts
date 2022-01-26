@@ -1,6 +1,7 @@
 export * from './common'
 export * from './env'
 export * from './sql'
+export * from './path'
 export { default as is } from './is'
 export { default as omit } from './omit'
 export { default as cls } from './cls'

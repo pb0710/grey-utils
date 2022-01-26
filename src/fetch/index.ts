@@ -1,4 +1,4 @@
-import { is } from '..'
+import { is, join } from '..'
 import dispatch from './dispatch'
 
 type Callback = (arg: any) => Promise<any>
@@ -60,7 +60,7 @@ export default class Fetch {
 		}
 		mergedConf = {
 			...config,
-			url: `${this.defaults.baseUrl}/${url}`
+			url: join(this.defaults.baseUrl, url)
 		}
 
 		const reqChain: Callback[] = []
