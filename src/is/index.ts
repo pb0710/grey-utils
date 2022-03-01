@@ -24,6 +24,10 @@ export function isString(arg: unknown): arg is string {
 	return typeof arg === 'string'
 }
 
+export function isNumber(arg: unknown): arg is number {
+	return typeof arg === 'number'
+}
+
 export function isBoolean(arg: unknown): arg is boolean {
 	return typeof arg === 'boolean'
 }
@@ -35,5 +39,6 @@ export default {
 	array: isArray,
 	function: isFunction,
 	string: isString,
+	number: isNumber,
 	boolean: isBoolean
 }
