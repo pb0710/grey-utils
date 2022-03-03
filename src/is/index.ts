@@ -40,5 +40,15 @@ export default {
 	function: isFunction,
 	string: isString,
 	number: isNumber,
-	boolean: isBoolean
+	boolean: isBoolean,
+	all: {
+		undefined: (args: unknown[]): args is undefined[] => args.every(isUndefined),
+		null: (args: unknown[]): args is null[] => args.every(isNull),
+		object: (args: unknown[]): args is Record<string, any>[] => args.every(isObject),
+		array: (args: unknown[]): args is any[][] => args.every(isArray),
+		function: (args: unknown[]): args is Function[] => args.every(isFunction),
+		string: (args: unknown[]): args is string[] => args.every(isString),
+		number: (args: unknown[]): args is number[] => args.every(isNumber),
+		boolean: (args: unknown[]): args is boolean[] => args.every(isBoolean)
+	}
 }

@@ -44,3 +44,12 @@ describe('object', () => {
 		expect(is.object(Object.create(null))).toBe(true)
 	})
 })
+
+describe('all', () => {
+	it('all undefined', () => {
+		expect(is.all.undefined([undefined, undefined, undefined])).toBe(true)
+	})
+	it('all array', () => {
+		expect(is.all.array([[], [1, 2], Array(1)])).toBe(true)
+	})
+})
