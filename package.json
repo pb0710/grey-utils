@@ -2,6 +2,7 @@
 	"version": "0.0.1",
 	"name": "grey-utils",
 	"main": "src/index.ts",
+	"types": "types",
 	"scripts": {
 		"prepare": "husky install",
 		"dev": "vite",
