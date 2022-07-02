@@ -17,6 +17,6 @@
 		"outDir": "./types",
 		"emitDeclarationOnly": true
 	},
-	"include": ["./src", "./example"],
+	"include": ["./src", "./example", "./try"],
 	"exclude": ["**/*.test.ts", "**/*.spec.ts", "**/*.test.tsx", "**/*.spec.tsx"]
 }

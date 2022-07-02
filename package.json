@@ -2,7 +2,6 @@
 	"version": "0.0.1",
 	"name": "grey-utils",
 	"main": "src/index.ts",
-	"types": "types/src/index.d.ts",
 	"scripts": {
 		"prepare": "husky install",
 		"dev": "vite",
@@ -20,6 +19,7 @@
 		"eslint-plugin-prettier": "^4.0.0",
 		"husky": "^8.0.1",
 		"jest": "^28.1.0",
+		"jest-environment-jsdom": "^28.1.2",
 		"lint-staged": "^12.4.2",
 		"pinst": "^3.0.0",
 		"prettier": "^2.6.2",
