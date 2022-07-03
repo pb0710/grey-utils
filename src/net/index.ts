@@ -2,18 +2,18 @@ import compose from '../compose'
 import omit from '../omit'
 import { join } from '../path'
 
-export type Fn = (...s: any[]) => any
+export type Middleware = (...s: any[]) => any
 class Interceptor {
-	private fulfillFns: Fn[]
-	private failFns: Fn[]
-	public fulfill?: Fn
-	public fail?: Fn
+	private fulfillFns: Middleware[]
+	private failFns: Middleware[]
+	public fulfill?: Middleware
+	public fail?: Middleware
 	constructor() {
 		this.fulfillFns = []
 		this.failFns = []
 	}
 
-	public use<T extends Fn, S extends Fn>(fulfill: T, fail: S): this {
+	public use<T extends Middleware, S extends Middleware>(fulfill: T, fail: S): this {
 		this.fulfillFns.push(fulfill)
 		this.failFns.push(fail)
 		this.fulfill = compose(...this.fulfillFns)
@@ -35,7 +35,6 @@ class CancelToken {
 	}
 }
 
-type FetchFn = (input: RequestInfo, init?: RequestInit) => Promise<Response>
 interface Config extends Omit<RequestInit, 'body'> {
 	parse?: 'json' | 'blob' | 'arrayBuffer' | 'text'
 	url?: string
@@ -45,7 +44,7 @@ interface Config extends Omit<RequestInit, 'body'> {
 interface BaseConfig extends Omit<Config, 'url'> {
 	baseURL?: string
 }
-export default class Async {
+export default class Net {
 	private baseConf: BaseConfig
 	public interceptors: {
 		request: Interceptor
@@ -73,13 +72,13 @@ export default class Async {
 			return Promise.reject(error)
 		}
 
-		const _fetch: FetchFn = fetch
-		return await _fetch(info, init)
+		return await fetch(info, init)
 			.then(
 				response => (response.ok ? response[parse]() : Promise.reject(response)),
 				error => {
 					if (error.name === 'AbortError') {
 						// We know it's been canceled!
+						// TODO:
 					}
 					const reason = this.interceptors.response.fail?.(error) ?? error
 					return Promise.reject(reason)
@@ -112,11 +111,11 @@ export default class Async {
 		return this.fetch({ ...conf, url, method: 'GET' })
 	}
 
-	public post<R>(url: string, data: Record<string, any>, conf?: Config): Promise<R> {
+	public post<R>(url: string, data: object, conf?: Config): Promise<R> {
 		return this.fetch({ ...conf, url, data, method: 'POST' })
 	}
 
-	public put<R>(url: string, data: Record<string, any>, conf?: Config): Promise<R> {
+	public put<R>(url: string, data: object, conf?: Config): Promise<R> {
 		return this.fetch({ ...conf, url, data, method: 'PUT' })
 	}
 

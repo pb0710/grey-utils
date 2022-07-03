@@ -1,4 +1,4 @@
-import { is, join } from '..'
+import { is, join } from '../../src'
 import dispatch from './dispatch'
 
 type Callback = (arg: any) => Promise<any>

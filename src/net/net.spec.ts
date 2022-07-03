@@ -1,9 +1,10 @@
-import Async from '.'
+// 此文件仅演示用法
+import Net from '.'
 
 describe('request resource', () => {
 	it('request real rest api', () => {
-		const async = new Async({ baseURL: 'http://localhost:10086' })
-		async.interceptors.request.use(
+		const net = new Net({ baseURL: 'http://localhost:10086' })
+		net.interceptors.request.use(
 			c => {
 				expect(typeof c).toBe('object')
 				expect(c.baseURL).toBe('http://localhost:10086')
@@ -13,7 +14,7 @@ describe('request resource', () => {
 			},
 			e => e
 		)
-		async.interceptors.response
+		net.interceptors.response
 			.use(
 				r => {
 					expect(typeof r).toBe('object')
@@ -28,7 +29,7 @@ describe('request resource', () => {
 				},
 				e => e
 			)
-		const result = async
+		const result = net
 			.fetch({
 				url: '/search',
 				method: 'get',
@@ -51,9 +52,9 @@ describe('request resource', () => {
 	// // 由于 nodejs v14 未实现 AbortController API（ReferenceError: AbortController is not defined）
 	// // 暂不覆盖请求取消的用例
 	// it('request cancellation', () => {
-	// 	const async = new Async()
-	// 	const source = async.CancelToken.source()
-	// 	async
+	// 	const net = new Net()
+	// 	const source = net.CancelToken.source()
+	// 	net
 	// 		.fetch({
 	// 			url: 'http://localhost:10086/search',
 	// 			signal: source.token

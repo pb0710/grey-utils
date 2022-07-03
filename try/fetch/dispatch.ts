@@ -1,5 +1,3 @@
-import { Config } from '.'
-
 function fakeFetch(): Promise<object> {
 	return new Promise((res, rej) => {
 		setTimeout(() => {
@@ -9,8 +7,7 @@ function fakeFetch(): Promise<object> {
 	})
 }
 
-export default function dispatch(conf: Config) {
-	console.log('conf: ', conf)
+export default function dispatch() {
 	return fakeFetch()
 		.then(res => {
 			return res
