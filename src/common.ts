@@ -1,13 +1,12 @@
 /**
  * 防抖
  */
-type Arg<F> = F extends (...args: (infer A)[]) => void ? A : never
-export function debounce<F extends (...args: Arg<F>[]) => void>(fn: F, wait?: number): (...args: Arg<F>[]) => void {
+export function debounce<F extends (...args: any) => void>(fn: F, wait?: number): (...args: Parameters<F>) => void {
 	let timer: number
-	return (...args: Arg<F>[]) => {
+	return function (...args) {
 		if (timer) clearTimeout(timer)
 		timer = window.setTimeout(() => {
-			fn(...args)
+			fn.apply(this, args)
 			timer = 0
 		}, wait)
 	}
@@ -16,13 +15,13 @@ export function debounce<F extends (...args: Arg<F>[]) => void>(fn: F, wait?: nu
 /**
  * 节流
  */
-export function throttle<F extends (...args: Arg<F>[]) => void>(fn: F, wait = 0): (...args: Arg<F>[]) => void {
+export function throttle<F extends (...args: any) => void>(fn: F, wait = 0): (...args: Parameters<F>) => void {
 	let lastTime = new Date().getTime()
-	return (...args: Arg<F>[]) => {
+	return function (...args) {
 		const now = new Date().getTime()
 		if (now - lastTime > wait) {
 			lastTime = now
-			fn(...args)
+			fn.apply(this, args)
 		}
 	}
 }

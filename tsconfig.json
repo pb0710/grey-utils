@@ -12,6 +12,7 @@
 		"noUnusedParameters": true,
 		"noImplicitReturns": true,
 		"noImplicitAny": true,
+		"noImplicitThis": false,
 		"noEmit": false,
 		"declaration": true,
 		"outDir": "./types",
